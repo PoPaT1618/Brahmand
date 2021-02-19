@@ -38,7 +38,7 @@ class FactoryBase(metaclass=ABCMeta):
     def _inner_create(cls, name: str, **kwargs):
         """Protected method that creates instance of the mentioned product"""
         if name not in cls._products:
-            return None
+            raise KeyError("Error: %s not found." %name)
 
         product_class = cls._products[name]
         product = product_class(**kwargs)
@@ -54,6 +54,13 @@ class OperatorBase(metaclass=ABCMeta):
         self._theta = kwargs.get('theta', None)
         self._phi = kwargs.get('phi', None)
         self._lambda = kwargs.get('lambda', None)
+
+        if self._theta is None:
+            raise KeyError("Error: theta not found.")
+        if self._theta is None:
+            raise KeyError("Error: phi not found.")
+        if self._theta is None:
+            raise KeyError("Error: lambda not found.")
 
     @abstractmethod
     def matrix(self, total_qubits: int, **kwargs):

@@ -37,42 +37,68 @@ class SimulatorCircuit(CircuitBase):
     """
 
     def initialize(self, num_qubits: int):
-        self.__total_qubits = num_qubits
+       try:
+            self.__total_qubits = num_qubits
+           
+            state = States.create("Classical")
+            state.set_to_ground_state(num_qubits)
+                   
+            print("initial state: %s" %state.get_vector())
+                   
+            return state
 
-        state = States.create("Classical")
-        state.set_to_ground_state(num_qubits)
-        
-        print("initial state: %s" %state.get_vector())
-        
-        return state
+       except KeyError as e:
+            print(e)
 
 
     def run(self, initial_state: StateBase, program):
-        calculator = Calculators.create("Numpy")
-        
-        #Iterated over each program line and updates the state
-        for operation in program:
-            operator = self.__get_operator(operation)
-            operator_matrix = operator.matrix(self.__total_qubits, **operation)
-            calculator.calculate_state(operator_matrix, initial_state)
-        return initial_state
+        try:
+            if initial_state is None:
+                raise TypeError("Error: initial_state is of NoneType.")
+            if program is None:
+                raise TypeError("Error: program is of NoneType.")
+
+            calculator = Calculators.create("Numpy")
+                    
+            #Iterated over each program line and updates the state
+            for operation in program:
+                operator = self.__get_operator(operation)
+                operator_matrix = operator.matrix(self.__total_qubits, **operation)
+                calculator.calculate_state(operator_matrix, initial_state)
+            return initial_state
+
+        except KeyError as e:
+            print(e)
+        except TypeError as e:
+            print(e)
 
 
     def measure(self, final_state: StateBase, num_shots : int):
-        measuring_unit = Measurements.create("Simulated")
-        measurements = {}
-        
-        #Taking 'num_shots' shots of measurement and printing the result
-        for i in range(num_shots):
-            measurement = measuring_unit.measure_state(final_state, self.__total_qubits)
-            if measurement not in measurements:
-                measurements[measurement] = 1
-            else:
-                measurements[measurement] += 1
-        print("final state: %s" %final_state.get_vector())
-        print("results: %s" %measurements)
-        
-        return measurements
+        try:
+            if final_state is None:
+                raise TypeError("Error: final_state is of NoneType.")
+            if num_shots is None:
+                raise TypeError("Error: num_shots is of NoneType.")
+
+            measuring_unit = Measurements.create("Simulated")
+            measurements = {}
+                    
+            #Taking 'num_shots' shots of measurement and printing the result
+            for i in range(num_shots):
+                measurement = measuring_unit.measure_state(final_state, self.__total_qubits)
+                if measurement not in measurements:
+                    measurements[measurement] = 1
+                else:
+                    measurements[measurement] += 1
+            print("final state: %s" %final_state.get_vector())
+            print("results: %s" %measurements)
+                    
+            return measurements
+
+        except KeyError as e:
+            print(e)
+        except TypeError as e:
+            print(e)
 
     def __get_operator(self, operation):
         operator = Operators.create(operation["gate"],  **operation["params"])

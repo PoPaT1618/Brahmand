@@ -72,11 +72,11 @@ class Measurements(FactoryBase):
     @classmethod
     def register(cls, name: str) -> Callable:
          """Class method for registering various measuring techniques to the internal collection of products"""
-        def inner(wrapped_class: MeasurementBase) -> Callable:
-            if name not in cls._products:
-                cls._products[name] = wrapped_class
-            return wrapped_class
-        return inner
+         def inner(wrapped_class: MeasurementBase) -> Callable:
+             if name not in cls._products:
+                 cls._products[name] = wrapped_class
+             return wrapped_class
+         return inner
 
     @classmethod
     def create(cls, name: str, **kwargs) -> 'MeasurementBase':

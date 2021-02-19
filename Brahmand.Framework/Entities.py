@@ -37,6 +37,9 @@ class U(OperatorBase):
         """Returns operator matrix with big endian encoding"""
         
         target_qubit = kwargs.get('target', None)
+        if target_qubit is None:
+            raise KeyError("Error: target not found.")
+
         I = np.identity(2)
         matrix = I
         
@@ -78,6 +81,11 @@ class CU(OperatorBase):
 
         control_qubit = kwargs.get('control', None) # control qubit
         target_qubit = kwargs.get('target', None) # target qubit
+
+        if control_qubit is None:
+            raise KeyError("Error: control not found.")
+        if target_qubit is None:
+            raise KeyError("Error: target not found.")
         
         operator_matrix = (self.__calculate_operator(total_qubits, control_qubit, self.__p0x0,
                                              target_qubit, self.__I) + 
