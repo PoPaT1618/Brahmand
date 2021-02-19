@@ -103,4 +103,3 @@ class SimulatorCircuit(CircuitBase):
     def __get_operator(self, operation):
         operator = Operators.create(operation["gate"],  **operation["params"])
         return operator
-
