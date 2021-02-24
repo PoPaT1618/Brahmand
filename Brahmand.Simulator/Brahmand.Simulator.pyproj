@@ -24,9 +24,6 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Brahmand.Simulator.py" />
-    <Compile Include="simulatorCircuit.py">
-      <SubType>Code</SubType>
-    </Compile>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Brahmand.Framework\Brahmand.Framework.pyproj">

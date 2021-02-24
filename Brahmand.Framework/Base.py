@@ -117,10 +117,14 @@ class CalculatorBase(metaclass=ABCMeta):
         """ Constructor """
 
     @abstractmethod
-    def calculate_state(self, operator_matrix, state: StateBase):
+    def calculate_state(self, state: StateBase, total_qubits: int, **operation):
         """Method that calculates the state based on operation matrix and updates the state accordingly."""
         pass
 
+    @abstractmethod
+    def measure_state(self, state: StateBase, num_shots: int, total_qubits: int):
+        """Method that measures the state for mentioned number of times and returns the result."""
+        pass
 
 
 class MeasurementBase(metaclass=ABCMeta):

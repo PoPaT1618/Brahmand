@@ -1,16 +1,15 @@
 """
-This module defines a circuit simulator. Ideally the strategy pattern should be implemented over here,
-in which case the Calculation strategy and measurement straegy also states would be injected to it rather then the circuit selecting them.
-But for now this will suffice.
+This module defines a circuit. It is implemented as a part of strategy pattern, in which 
+the Calculation strategy and states would be injected to it.
 
-Example for using this simulator:
+Example for using this as a classical simulator:
 
 
 from Factory import *
 from Entities import *
-from simulatorCircuit import SimulatorCircuit
+from Circuit import Circuit
 
-simulator = SimulatorCircuit()
+simulator = Circuit("Classical", "Numpy")
 
 print("Program for suprposition of all states")
 
@@ -31,16 +30,24 @@ simulator.measure(final_state, 1000)
 from Factory import *
 from Base import *
 
-class SimulatorCircuit(CircuitBase):
+class Circuit(CircuitBase):
     """
     This class is a classical simulator of a quantum circuit.
     """
 
+    def __init__(self, state_type: str, calculator_type: str):
+        """ Constructor """
+        self.__state_type = state_type
+        self.__calculator = Calculators.create(calculator_type)
+        self.__total_qubits = 2 #Default number qubits
+        
+        
+
     def initialize(self, num_qubits: int):
        try:
             self.__total_qubits = num_qubits
-           
-            state = States.create("Classical")
+            state = States.create(self.__state_type)
+
             state.set_to_ground_state(num_qubits)
                    
             print("initial state: %s" %state.get_vector())
@@ -57,14 +64,11 @@ class SimulatorCircuit(CircuitBase):
                 raise TypeError("Error: initial_state is of NoneType.")
             if program is None:
                 raise TypeError("Error: program is of NoneType.")
-
-            calculator = Calculators.create("Numpy")
                     
             #Iterated over each program line and updates the state
             for operation in program:
-                operator = self.__get_operator(operation)
-                operator_matrix = operator.matrix(self.__total_qubits, **operation)
-                calculator.calculate_state(operator_matrix, initial_state)
+                self.__calculator.calculate_state(initial_state, self.__total_qubits, **operation)
+
             return initial_state
 
         except KeyError as e:
@@ -80,16 +84,8 @@ class SimulatorCircuit(CircuitBase):
             if num_shots is None:
                 raise TypeError("Error: num_shots is of NoneType.")
 
-            measuring_unit = Measurements.create("Simulated")
-            measurements = {}
-                    
-            #Taking 'num_shots' shots of measurement and printing the result
-            for i in range(num_shots):
-                measurement = measuring_unit.measure_state(final_state, self.__total_qubits)
-                if measurement not in measurements:
-                    measurements[measurement] = 1
-                else:
-                    measurements[measurement] += 1
+            measurements = self.__calculator.measure_state(final_state, num_shots, self.__total_qubits)
+            
             print("final state: %s" %final_state.get_vector())
             print("results: %s" %measurements)
                     
@@ -99,7 +95,3 @@ class SimulatorCircuit(CircuitBase):
             print(e)
         except TypeError as e:
             print(e)
-
-    def __get_operator(self, operation):
-        operator = Operators.create(operation["gate"],  **operation["params"])
-        return operator

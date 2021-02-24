@@ -26,6 +26,9 @@
     <Compile Include="base.py">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Circuit.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="entities.py" />
     <Compile Include="factory.py">
       <SubType>Code</SubType>

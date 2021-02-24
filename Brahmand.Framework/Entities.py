@@ -159,11 +159,32 @@ class ClassicalState(StateBase):
 @Calculators.register("Numpy")
 class NumpyCalculator(CalculatorBase):
 
-    def calculate_state(self, operator_matrix, state: StateBase):
-        psi = np.dot(state.get_vector(), operator_matrix)
-        state.update_vector(psi)
+    def calculate_state(self, state: StateBase, total_qubits: int, **operation):
+        operator = self.__get_operator(operation) #Get operator
+        operator_matrix = operator.matrix(total_qubits, **operation) #Calculate operator matrix
+
+        psi = np.dot(state.get_vector(), operator_matrix) #Operate on state
+        state.update_vector(psi) #Update state
+
         return state
 
+    def measure_state(self, state: StateBase, num_shots: int, total_qubits: int):
+        measuring_unit = Measurements.create("Simulated")
+        measurements = {}
+                    
+        #Taking 'num_shots' shots of measurement
+        for i in range(num_shots):
+            measurement = measuring_unit.measure_state(state, total_qubits)
+            if measurement not in measurements:
+                measurements[measurement] = 1
+            else:
+                measurements[measurement] += 1
+
+        return measurements
+
+    def __get_operator(self, operation):
+        operator = Operators.create(operation["gate"],  **operation["params"])
+        return operator
 
 """Measurement Strategies"""
 

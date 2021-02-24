@@ -4,12 +4,12 @@ This module tests the simulation circuit.
 
 from Factory import *
 from Entities import *
-from simulatorCircuit import SimulatorCircuit
+from Circuit import Circuit
 
 from datetime import timedelta
 import datetime
 
-simulator = SimulatorCircuit()
+simulator = Circuit("Classical", "Numpy")
 
 
 """Program 1"""
